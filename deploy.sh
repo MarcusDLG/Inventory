@@ -1,7 +1,7 @@
-docker build -t sdg-sample-api-template .
+docker build -t inventory-of-drones .
 
-docker tag sdg-sample-api-template registry.heroku.com/sdg-sample-api-template/web
+docker tag inventory-of-drones registry.heroku.com/inventory-of-drones/web
 
-docker push registry.heroku.com/sdg-sample-api-template/web
+docker push registry.heroku.com/inventory-of-drones/web
 
-heroku container:release web -a sdg-sample-api-template
+heroku container:release web -a inventory-of-drones

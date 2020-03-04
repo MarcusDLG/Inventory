@@ -37,5 +37,14 @@ namespace Inventory.Controllers
       return Ok(location);
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Location>> UpdateLocation(int id, Location newData)
+    {
+      newData.Id = id;
+      db.Entry(newData).State = EntityState.Modified;
+      await db.SaveChangesAsync();
+      return Ok(newData);
+    }
+
   }
 }

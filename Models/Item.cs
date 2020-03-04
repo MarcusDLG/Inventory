@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Inventory.Models
 {
@@ -11,5 +12,8 @@ namespace Inventory.Models
     public int NumberInStock { get; set; }
     public double Price { get; set; }
     public DateTime? DateOrdered { get; set; }
+    public int LocationId { get; set; }
+    public Location Location { get; set; }
+
   }
 }

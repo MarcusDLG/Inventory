@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200304202646_AddedLocationTableBase")]
-    partial class AddedLocationTableBase
+    [Migration("20200304205851_RestoredTables")]
+    partial class RestoredTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,9 @@ namespace Inventory.Migrations
                     b.Property<DateTime?>("DateOrdered")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -48,7 +51,39 @@ namespace Inventory.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocationId");
+
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Location", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ManagerName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Item", b =>
+                {
+                    b.HasOne("Inventory.Models.Location", "Location")
+                        .WithMany("Items")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

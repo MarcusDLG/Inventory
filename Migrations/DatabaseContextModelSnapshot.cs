@@ -29,6 +29,9 @@ namespace Inventory.Migrations
                     b.Property<DateTime?>("DateOrdered")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -45,6 +48,8 @@ namespace Inventory.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Items");
                 });
@@ -68,6 +73,15 @@ namespace Inventory.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("Inventory.Models.Item", b =>
+                {
+                    b.HasOne("Inventory.Models.Location", "Location")
+                        .WithMany("Items")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

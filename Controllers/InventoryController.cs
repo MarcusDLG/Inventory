@@ -30,10 +30,25 @@ namespace Inventory.Controllers
 
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Item>> GetOneItem(int id)
+    [HttpGet("location/{locationId}")]
+    public async Task<ActionResult<List<Item>>> GetAllItemsByLocation(int locationId)
     {
-      var item = await db.Items.FirstOrDefaultAsync(i => i.Id == id);
+      var allItems = db.Items.Where(n => n.LocationId == locationId);
+      if (allItems == null)
+      {
+        return NotFound();
+      }
+      else
+      {
+        return await allItems.ToListAsync();
+      }
+
+    }
+
+    [HttpGet("{id}/{locationId}")]
+    public async Task<ActionResult<Item>> GetOneItem(int id, int locationId)
+    {
+      var item = await db.Items.FirstOrDefaultAsync(i => i.Id == id && i.LocationId == locationId);
       if (item == null)
       {
         return NotFound();
@@ -44,7 +59,7 @@ namespace Inventory.Controllers
     [HttpGet("sku/{sku}")]
     public async Task<ActionResult<Item>> GetOneItemSku(string sku)
     {
-      var item = await db.Items.FirstOrDefaultAsync(i => i.Sku == sku);
+      var item = await db.Items.Where(i => i.Sku == sku).ToListAsync();
       if (item == null)
       {
         return NotFound();
@@ -63,28 +78,43 @@ namespace Inventory.Controllers
       return Ok(item);
     }
 
-
-    [HttpPost]
-    public async Task<ActionResult<Item>> CreateItem(Item item)
+    [HttpGet("stock/{locationId}")]
+    public async Task<ActionResult<Item>> GetOutOfStockLocation(int locationId)
     {
+      var item = await db.Items.Where(i => i.NumberInStock == 0 && i.LocationId == locationId).ToListAsync();
+      if (item == null)
+      {
+        return NotFound();
+      }
+      return Ok(item);
+
+    }
+
+
+
+    [HttpPost("{locationId}")]
+    public async Task<ActionResult<Item>> CreateItemByLocation(int locationId, Item item)
+    {
+      item.LocationId = locationId;
       await db.Items.AddAsync(item);
       await db.SaveChangesAsync();
       return Ok(item);
     }
 
-    [HttpPut]
-    public async Task<ActionResult<Item>> UpdateItem(int id, Item newData)
+    [HttpPut("{id}/{locationId}")]
+    public async Task<ActionResult<Item>> UpdateItem(int id, int locationId, Item newData)
     {
       newData.Id = id;
+      newData.LocationId = locationId;
       db.Entry(newData).State = EntityState.Modified;
       await db.SaveChangesAsync();
       return Ok(newData);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteItem(int id)
+    [HttpDelete("{id}/{locationId}")]
+    public async Task<ActionResult> DeleteItem(int id, int locationId)
     {
-      var item = await db.Items.FirstOrDefaultAsync(f => f.Id == id);
+      var item = await db.Items.FirstOrDefaultAsync(f => f.Id == id && f.LocationId == locationId);
       if (item == null)
       {
         return NotFound();

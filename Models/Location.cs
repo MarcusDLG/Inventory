@@ -12,9 +12,3 @@ namespace Inventory.Models
 
   }
 }
-
-
-//  Id
-//  Address
-//  ManagerName
-//  PhoneNumber

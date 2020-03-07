@@ -6,6 +6,7 @@ using Inventory.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Inventory.Controllers
 {
@@ -15,35 +16,45 @@ namespace Inventory.Controllers
   {
     public DatabaseContext db = new DatabaseContext();
 
-    [HttpGet]
-    public async Task<ActionResult<List<Order>>> GetAllOrders()
-    {
-      var allOrders = db.Orders.OrderBy(n => n.Id);
-      if (allOrders == null)
-      {
-        return NotFound();
-      }
-      else
-      {
-        return Ok(await allOrders.ToListAsync());
-      }
+    // [HttpGet]
+    // public async Task<ActionResult<List<Order>>> GetAllOrders()
+    // {
+    //   var allOrders = db.Orders.Include(n => n.ItemOrders).OrderBy(n => n.Id);
+    //   if (allOrders == null)
+    //   {
+    //     return NotFound();
+    //   }
+    //   else
+    //   {
+    //     return Ok(await allOrders.ToListAsync());
+    //   }
+    // }
 
+    [HttpGet]
+    public ActionResult GetAllOrdersss()
+    {
+      return new ContentResult()
+      {
+        Content = JsonConvert.SerializeObject(db.Orders.Include(n => n.ItemOrders).OrderBy(n => n.Id),
+        new JsonSerializerSettings
+        {
+          ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        }),
+        ContentType = "application/json",
+        StatusCode = 200
+      };
     }
 
-    [HttpPost("{locationId}/{orderNumber}/{itemId}")]
-    public async Task<ActionResult<List<Order>>> PostOrder(int locationId, int ordernumber, int itemId, Order newData)
+
+    [HttpPost]
+    public async Task<ActionResult<List<Order>>> PostOrder(Order newData)
     {
-      newData.LocationId = locationId;
-      newData.OrderNumber = ordernumber;
+      // var itemOrder = new ItemOrder();
+
+      // newData.ItemOrders.Add(itemOrder);
       await db.Orders.AddAsync(newData);
       await db.SaveChangesAsync();
-
-      var itemOrder = new ItemOrder
-      {
-        OrderId = newData.Id,
-        ItemId = itemId
-      };
-      await db.ItemOrders.AddAsync(itemOrder);
+      newData.ItemOrders = null;
       return Ok(newData);
     }
 

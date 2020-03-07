@@ -101,6 +101,14 @@ namespace Inventory.Controllers
       return Ok(item);
     }
 
+    [HttpPost("{locationId}/multiple")]
+    public List<Item> AddManyItems(List<Item> items)
+    {
+      db.Items.AddRange(items);
+      db.SaveChanges();
+      return items;
+    }
+
     [HttpPut("{id}/{locationId}")]
     public async Task<ActionResult<Item>> UpdateItem(int id, int locationId, Item newData)
     {

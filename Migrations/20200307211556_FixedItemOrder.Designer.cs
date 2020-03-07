@@ -3,15 +3,17 @@ using System;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Inventory.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200307211556_FixedItemOrder")]
+    partial class FixedItemOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,6 +109,9 @@ namespace Inventory.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("text");
 
+                    b.Property<int>("LocationId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -114,6 +119,8 @@ namespace Inventory.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Orders");
                 });
@@ -138,6 +145,15 @@ namespace Inventory.Migrations
                     b.HasOne("Inventory.Models.Order", "Order")
                         .WithMany("ItemOrders")
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Inventory.Models.Order", b =>
+                {
+                    b.HasOne("Inventory.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

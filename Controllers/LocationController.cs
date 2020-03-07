@@ -37,6 +37,14 @@ namespace Inventory.Controllers
       return Ok(location);
     }
 
+    [HttpPost("multiple")]
+    public List<Location> AddManyItems(List<Location> locations)
+    {
+      db.Locations.AddRange(locations);
+      db.SaveChanges();
+      return locations;
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<Location>> UpdateLocation(int id, Location newData)
     {

@@ -3,15 +3,17 @@ using System;
 using Inventory.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Inventory.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20200306163809_AddedOrderItemOrderTable")]
+    partial class AddedOrderItemOrderTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +58,7 @@ namespace Inventory.Migrations
 
             modelBuilder.Entity("Inventory.Models.ItemOrder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
@@ -67,16 +69,13 @@ namespace Inventory.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("OrderNumber")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.HasIndex("ItemId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("ItemOrders");
+                    b.ToTable("ItemOrder");
                 });
 
             modelBuilder.Entity("Inventory.Models.Location", b =>
@@ -102,7 +101,7 @@ namespace Inventory.Migrations
 
             modelBuilder.Entity("Inventory.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
@@ -110,20 +109,12 @@ namespace Inventory.Migrations
                     b.Property<string>("CustomerName")
                         .HasColumnType("text");
 
-                    b.Property<int>("LocationId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("OrderNumber")
-                        .HasColumnType("integer");
+                    b.HasKey("id");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("Inventory.Models.Item", b =>
@@ -146,15 +137,6 @@ namespace Inventory.Migrations
                     b.HasOne("Inventory.Models.Order", "Order")
                         .WithMany("ItemOrders")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Inventory.Models.Order", b =>
-                {
-                    b.HasOne("Inventory.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
